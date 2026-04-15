@@ -1,0 +1,48 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{%static 'css/style.css'%}">
+    <title>Main</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="left_part">
+            <div class="left_titles">
+                <p class="left_toptitle">ПРОЕКТ</p>
+                <h2 class="left_title1">АВТО</h2>
+                <h2 class="left_title2">НОМИЯ</h2>
+                <h3 class="left_subtitle3">V. 2026 / ЦИФРОВАЯ ХРУПКОСТЬ</h3>
+            </div>
+
+            <p class="left_main-p">Мы стали первыми поколениями людей, которым не нужно помнить дорогу, уметь считать в уме или знать, как устроены вещи на самом деле. Комфорт стал нашей новой базовой потребностью, а смартфон — внешним отделом мозга.</p>
+            <div class="left-lowpart">
+                <a class="left_btn" href="{% url 'testingpage' %}">
+                    <p class="left_btn-text">[ НАЧАТЬ ТРЕНАЖЕР ]</p>
+                </a>
+                <p class="left_subp">REL_01 / OFFLINE_READY</p>
+            </div>
+
+        </div>
+        <div class="right_part">
+            <div class="right_titles">
+                <p class="right_toptitle">Офлайн — это новая роскошь</p>
+                <div class="right_maintitles">
+                    <h2 class="right_title1">Обратная</h2>
+                    <h2 class="right_title2">Сторона</h2>
+                </div>
+                <h3 class="right_subtitle3">Что останется от твоих знаний,
+    если завтра экран не загорится?</h3>
+            </div>
+
+            <p class="right_main-p">Делегируя выживание алгоритмам, мы платим самую высокую цену — мы теряем автономность. Эта иллюзия всезнания рассыпается в прах при первой серьёзной системной ошибке.</p>
+            <p class="right_subp">Это не призыв вернуться в пещеры. Это попытка нащупать границу нашей личной независимости.</p>
+
+        </div>
+        </div>
+    </div>
+</body>
+</html>
