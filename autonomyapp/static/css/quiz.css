@@ -1,0 +1,611 @@
+/* === СБРОС И BASE === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #07090f;
+  color: #e0eeff;
+  font-family: 'Share Tech Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* === ФОНОВАЯ СЕТКА === */
+/* position: fixed — висит на месте при скролле */
+.grid-bg {
+  position: fixed;
+  inset: 0; /* shorthand для top/right/bottom/left: 0 */
+  background-image:
+    linear-gradient(rgba(0,180,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none; /* клики проходят сквозь этот div */
+  z-index: 0;
+}
+
+/* === ШАПКА === */
+.header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(0,200,255,.1);
+  background: rgba(7,9,15,.8);
+}
+
+.header-logo {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 14px;
+  color: rgba(0,220,255,.8);
+  letter-spacing: .2em;
+}
+
+.header-info {
+  display: flex;
+  gap: 2rem;
+  font-size: 11px;
+  color: rgba(0,200,255,.5);
+  letter-spacing: .1em;
+}
+
+/* === MAIN === */
+.main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 60px);
+}
+
+/* === ПРОГРЕСС-БАР === */
+.progress-wrap {
+  width: 360px;
+  height: 2px;
+  background: rgba(0,200,255,.1);
+  border-radius: 1px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%; /* JS меняет это значение */
+  background: rgba(0,220,255,.7);
+  border-radius: 1px;
+  transition: width .4s ease; /* плавное изменение */
+}
+
+/* === 3D СЦЕНА === */
+/* perspective задаёт глубину 3D эффекта */
+.scene {
+  width: 360px;
+  height: 500px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+/* transform-style: preserve-3d — дети тоже участвуют в 3D */
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform .7s cubic-bezier(.4,0,.2,1);
+}
+
+/* класс добавляет JS при клике */
+.card.flipped {
+  transform: rotateY(180deg);
+}
+
+/* === ОБЩЕЕ ДЛЯ ОБЕИХ СТОРОН === */
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  /* backface-visibility: hidden — скрывает сторону когда она повёрнута от нас */
+  backface-visibility: hidden;
+}
+
+/* === ЛИЦЕВАЯ СТОРОНА === */
+.front {
+  background: #0d1525;
+  border: 1px solid rgba(0,200,255,.2);
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.front-tag {
+  font-size: 10px;
+  letter-spacing: .2em;
+  color: rgba(0,200,255,.5);
+  text-transform: uppercase;
+}
+
+.front-question {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #cde;
+  flex: 1; /* занимает всё доступное пространство */
+}
+
+/* === ВАРИАНТЫ ОТВЕТОВ === */
+.option {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .6rem .75rem;
+  border: 1px solid rgba(0,200,255,.15);
+  border-radius: 6px;
+  font-size: 12px;
+  color: rgba(180,210,255,.75);
+  cursor: pointer;
+  /* transition — анимация при смене стилей */
+  transition: all .2s ease;
+}
+
+/* :hover — стили при наведении мыши */
+.option:hover {
+  border-color: rgba(0,200,255,.4);
+  background: rgba(0,200,255,.06);
+  color: #e0f0ff;
+}
+
+/* класс добавляет JS когда выбран этот вариант */
+.option.selected {
+  border-color: rgba(0,200,255,.7);
+  background: rgba(0,200,255,.1);
+  color: #00f0ff;
+}
+
+.option.correct {
+  border-color: rgba(0,200,80,.7);
+  background: rgba(0,200,80,.08);
+  color: #80ffb0;
+}
+
+.option.wrong {
+  border-color: rgba(220,60,60,.7);
+  background: rgba(220,60,60,.08);
+  color: #ff9090;
+}
+
+.option-letter {
+  font-size: 11px;
+  color: rgba(0,200,255,.5);
+  min-width: 18px;
+}
+
+.front-hint {
+  font-size: 10px;
+  color: rgba(0,200,255,.25);
+  text-align: center;
+  letter-spacing: .1em;
+  margin-top: auto;
+}
+
+/* === ОБРАТНАЯ СТОРОНА === */
+/* rotateY(180deg) — изначально повёрнута, видна только после флипа */
+.back {
+  background: #f0e6cc;
+  border: 1px solid rgba(160,120,60,.3);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-family: 'Special Elite', serif;
+}
+
+/* === ШТАМП === */
+.stamp {
+  display: inline-block;
+  align-self: flex-start;
+  border: 3px solid rgba(40,140,40,.7);
+  color: rgba(30,120,30,.9);
+  font-size: 20px;
+  letter-spacing: .1em;
+  padding: .3rem .75rem;
+  /* rotate — небольшой наклон для реалистичности */
+  transform: rotate(-3deg);
+  border-radius: 2px;
+}
+
+/* модификатор для неверного ответа */
+.stamp.wrong {
+  border-color: rgba(180,40,40,.7);
+  color: rgba(160,30,30,.9);
+}
+
+.back-explanation {
+  font-size: 13px;
+  color: #3a2510;
+  line-height: 1.8;
+  flex: 1;
+}
+
+.next-btn {
+  background: transparent;
+  border: 1.5px solid rgba(120,80,30,.5);
+  color: #6a4020;
+  font-family: 'Special Elite', serif;
+  font-size: 12px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  padding: .6rem 1.25rem;
+  cursor: pointer;
+  transition: all .2s ease;
+  align-self: flex-start;
+}
+
+.next-btn:hover {
+  background: rgba(120,80,30,.1);
+  border-color: rgba(120,80,30,.9);
+}
+
+
+
+
+
+
+/* === ЭКРАН РЕЗУЛЬТАТОВ === */
+.results {
+  position: fixed;
+  inset: 0;
+  background: rgba(7,9,15,.95);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.results-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+  max-width: 400px;
+  padding: 2rem;
+  border: 1px solid rgba(0,200,255,.15);
+  border-radius: 12px;
+  background: #0d1525;
+}
+
+.results-tag {
+  font-size: 10px;
+  letter-spacing: .25em;
+  color: rgba(0,200,255,.4);
+  text-transform: uppercase;
+}
+
+.results-percent {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 72px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+/* цвет процента меняет JS через классы */
+.results-percent.rank-bad    { color: rgba(220,80,80,.9); }
+.results-percent.rank-ok     { color: rgba(220,180,0,.9); }
+.results-percent.rank-good   { color: rgba(0,200,255,.9); }
+.results-percent.rank-great  { color: rgba(0,220,120,.9); }
+.results-percent.rank-perfect{ color: #fff; text-shadow: 0 0 40px rgba(0,220,255,.6); }
+
+.results-rank {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(0,220,255,.9);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.results-desc {
+  font-size: 13px;
+  color: rgba(180,210,255,.6);
+  line-height: 1.7;
+  max-width: 30ch;
+}
+
+.results-score {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: .5rem;
+}
+
+.score-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .25rem;
+}
+
+.score-val {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.score-lbl {
+  font-size: 10px;
+  letter-spacing: .15em;
+  color: rgba(0,200,255,.4);
+  text-transform: uppercase;
+}
+
+.score-divider {
+  font-size: 32px;
+  color: rgba(0,200,255,.2);
+}
+
+.restart-btn {
+  background: transparent;
+  border: 1px solid rgba(0,200,255,.4);
+  color: rgba(0,220,255,.8);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .2em;
+  padding: .75rem 2rem;
+  cursor: pointer;
+  transition: all .2s ease;
+  margin-top: .5rem;
+}
+
+.restart-btn:hover {
+  background: rgba(0,200,255,.08);
+  border-color: rgba(0,200,255,.8);
+  color: #fff;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* === АДАПТИВ === */
+
+/* ПЛАНШЕТ / НЕБОЛЬШОЙ ЭКРАН */
+@media (max-width: 768px) {
+  .header {
+    padding: .75rem 1rem;
+  }
+
+  .header-logo {
+    font-size: 11px;
+  }
+
+  .header-info {
+    gap: 1rem;
+    font-size: 10px;
+  }
+
+  .progress-wrap {
+    width: 90%;
+  }
+
+  .scene {
+    width: 90vw;
+    height: auto;
+    min-height: 480px;
+  }
+
+  .face {
+    padding: 1.25rem;
+  }
+
+  .front-question {
+    font-size: 13px;
+  }
+
+  .option {
+    padding: .5rem .6rem;
+    font-size: 11px;
+  }
+
+  .results-inner {
+    width: 90vw;
+    padding: 1.5rem;
+  }
+
+  .results-percent {
+    font-size: 56px;
+  }
+}
+
+/* ТЕЛЕФОН */
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    gap: .5rem;
+    padding: .75rem 1rem;
+    text-align: center;
+  }
+
+  .main {
+    padding: 1rem .5rem;
+  }
+
+  .progress-wrap {
+    width: 95%;
+  }
+
+  .scene {
+    width: 95vw;
+    min-height: 520px;
+  }
+
+  .face {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .front-tag {
+    font-size: 9px;
+  }
+
+  .front-question {
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+
+  .option {
+    padding: .6rem .5rem;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .stamp {
+    font-size: 16px;
+    padding: .25rem .5rem;
+  }
+
+  .back-explanation {
+    font-size: 12px;
+  }
+
+  .next-btn {
+    font-size: 11px;
+    padding: .5rem 1rem;
+  }
+
+  .results-percent {
+    font-size: 48px;
+  }
+
+  .results-rank {
+    font-size: 14px;
+  }
+
+  .score-val {
+    font-size: 26px;
+  }
+}
+
+/* 4K — ШКОЛЬНЫЕ ДОСКИ */
+@media (min-width: 2560px) {
+  body {
+    font-size: 20px;
+  }
+
+  .header {
+    padding: 1.5rem 4rem;
+  }
+
+  .header-logo {
+    font-size: 22px;
+  }
+
+  .header-info {
+    font-size: 18px;
+    gap: 3rem;
+  }
+
+  .progress-wrap {
+    width: 600px;
+    height: 4px;
+    margin-bottom: 3rem;
+  }
+
+  .scene {
+    width: 600px;
+    height: 780px;
+  }
+
+  .face {
+    padding: 2.5rem;
+    border-radius: 20px;
+  }
+
+  .front-tag {
+    font-size: 16px;
+    letter-spacing: .25em;
+  }
+
+  .front-question {
+    font-size: 22px;
+    line-height: 1.8;
+  }
+
+  .option {
+    padding: 1rem 1.25rem;
+    font-size: 19px;
+    border-radius: 8px;
+    margin-bottom: .75rem;
+  }
+
+  .option-letter {
+    font-size: 17px;
+  }
+
+  .front-hint {
+    font-size: 15px;
+  }
+
+  .stamp {
+    font-size: 32px;
+    border-width: 4px;
+    padding: .5rem 1.25rem;
+  }
+
+  .back-explanation {
+    font-size: 20px;
+    line-height: 1.9;
+  }
+
+  .next-btn {
+    font-size: 18px;
+    padding: 1rem 2rem;
+    border-width: 2px;
+  }
+
+  .results-inner {
+    max-width: 700px;
+    padding: 3rem;
+    border-radius: 20px;
+  }
+
+  .results-percent {
+    font-size: 120px;
+  }
+
+  .results-rank {
+    font-size: 28px;
+  }
+
+  .results-desc {
+    font-size: 20px;
+  }
+
+  .score-val {
+    font-size: 52px;
+  }
+
+  .score-lbl {
+    font-size: 16px;
+  }
+
+  .restart-btn {
+    font-size: 18px;
+    padding: 1rem 2.5rem;
+  }
+}

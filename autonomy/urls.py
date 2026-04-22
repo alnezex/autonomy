@@ -16,11 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from autonomyapp.views import get_main, get_testing
+from autonomyapp.views import get_main, get_testing, check_answer
+# from django.urls import path
+# from . import views
+
+# urlpatterns = [
+#     path('', views.index, name='index'),
+#     path('quiz/', views.quiz, name='quiz'),
+#     path('api/check/', views.check_answer, name='check_answer'),
+# ]
+
+
+
 
 
 urlpatterns = [
-    path('', get_main, name='homepage'),
+    path('', get_main, name='index'),
     path('admin/', admin.site.urls),
-    path('testing', get_testing, name='testingpage')
+    path('quiz/', get_testing, name='testingpage'),
+    path('api/check/', check_answer, name='check_answer'),
 ]

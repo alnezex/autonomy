@@ -1,13 +1,158 @@
-
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="">
-    <title>Testing</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тренажёр — Автономия</title>
+
+  <!-- Шрифты с Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Наш CSS файл -->
+  <link rel="stylesheet" href="{% static 'css/quiz.css' %}">
 </head>
 <body>
-    <p style="font-size: 100px;">ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО ЕЩЕ НЕ ГОТОВО</p>
+
+  <!-- Фоновая сетка — просто декоративный div -->
+  <div class="grid-bg"></div>
+
+  <!-- Шапка -->
+  <header class="header">
+    <div class="header-logo">АВТОНОМИЯ</div>
+    <div class="header-info">
+      <!-- current и total передаём из JS -->
+      <span id="header-num">КАРТОЧКА 1 / {{ questions|length }}</span>
+      <span id="header-timer">00:00</span>
+    </div>
+  </header>
+
+  <!-- Основной контейнер по центру -->
+  <main class="main">
+
+    <!-- Прогресс-бар вверху -->
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Сцена для 3D переворота — нужен родитель с perspective -->
+    <div class="scene" id="scene">
+      <div class="card" id="card">
+
+        <!-- ЛИЦЕВАЯ СТОРОНА (цифровой стиль) -->
+        <div class="face front">
+
+          <div class="front-tag" id="frontTag">СИТУАЦИЯ: ЗАГРУЗКА...</div>
+          <div class="front-question" id="frontQuestion">
+            Загрузка вопроса...
+          </div>
+
+          <!-- Варианты ответов -->
+          <!-- data-letter — атрибут который читает JS чтобы знать какую букву отправить -->
+          <div class="option" data-letter="A">
+            <span class="option-letter">A)</span>
+            <span class="option-text" id="optA"></span>
+          </div>
+          <div class="option" data-letter="B">
+            <span class="option-letter">Б)</span>
+            <span class="option-text" id="optB"></span>
+          </div>
+          <div class="option" data-letter="C">
+            <span class="option-letter">В)</span>
+            <span class="option-text" id="optC"></span>
+          </div>
+
+          <div class="front-hint">нажмите на вариант чтобы проверить ответ</div>
+
+        </div>
+        <!-- конец .front -->
+
+        <!-- ОБРАТНАЯ СТОРОНА (аналоговый стиль) -->
+        <div class="face back">
+
+          <!-- Штамп ПРАВИЛЬНО / НЕВЕРНО -->
+          <div class="stamp" id="stampEl">ПРАВИЛЬНО!</div>
+
+          <div class="back-explanation" id="backExplanation">
+            Текст объяснения появится здесь.
+          </div>
+
+          <button class="next-btn" id="nextBtn">
+            Следующий уровень →
+          </button>
+
+        </div>
+        <!-- конец .back -->
+
+      </div>
+      <!-- конец .card -->
+    </div>
+    <!-- конец .scene -->
+     <!-- ЭКРАН РЕЗУЛЬТАТОВ — скрыт по умолчанию -->
+<div class="results" id="results" style="display:none">
+
+  <div class="results-inner">
+
+    <div class="results-tag">ТЕСТИРОВАНИЕ ЗАВЕРШЕНО</div>
+
+    <!-- Большой процент -->
+    <div class="results-percent" id="resultsPercent">0%</div>
+
+    <!-- Звание -->
+    <div class="results-rank" id="resultsRank">—</div>
+
+    <!-- Описание -->
+    <div class="results-desc" id="resultsDesc"></div>
+
+    <!-- Счёт -->
+    <div class="results-score">
+      <div class="score-block">
+        <div class="score-val" id="scoreCorrect">0</div>
+        <div class="score-lbl">правильно</div>
+      </div>
+      <div class="score-divider">/</div>
+      <div class="score-block">
+        <div class="score-val" id="scoreTotal">0</div>
+        <div class="score-lbl">всего</div>
+      </div>
+    </div>
+
+    <!-- Кнопка рестарта -->
+    <button class="restart-btn" id="restartBtn">
+      [ НАЧАТЬ ЗАНОВО ]
+    </button>
+
+  </div>
+
+</div>
+
+  </main>
+
+  <!-- Передаём данные из Django в JS -->
+  <!-- Django рендерит этот блок на сервере, в браузер приходит готовый массив -->
+  <script>
+    const questions = [
+      {% for q in questions %}
+      {
+        id: {{ q.id }},
+        number: {{ q.card_number }},
+        topic: "{{ q.topic|escapejs }}",
+        text: "{{ q.text|escapejs }}",
+        options: {
+          A: "{{ q.option_a|escapejs }}",
+          B: "{{ q.option_b|escapejs }}",
+          C: "{{ q.option_c|escapejs }}"
+        }
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ];
+
+    // CSRF токен нужен Django для защиты POST запросов
+    const CSRF_TOKEN = "{{ csrf_token }}";
+  </script>
+
+  <!-- JS подключаем последним чтобы HTML уже загрузился -->
+  <script src="{% static 'js/quiz.js' %}"></script>
+
 </body>
 </html>
